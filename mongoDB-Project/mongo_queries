@@ -1,0 +1,147 @@
+Part - 2
+Typical Queries   
+BY: Tejaswi Prakhya , Sapna Patil                                                    
+1.	Find all restaurants with zip code X or Y -Using 89117 and 89122 
+db.yelp.business.find( {$or: [   {"full_address": /89117/}, {"full_address": /89122/}  ]  }   , {"categories" :"Restaurants" }).pretty().count() = 1083
+2.	Find all restaurants in city X
+db.yelp.business.find( { "city" :"Las Vegas"} , {"name" :"name" }).pretty().count() = 19,328
+db.yelp.business.find({"full_address":{$regex: 'Las Vegas'}}).count() = 20,382
+3.	Find the restaurants within 5 miles of lat , lon
+db.yelp.business.find({   loc: {   $geoWithin: { $center: [ [ -80.839186,35.226504] , .004 ] }  } }) .count() = 291
+db.yelp.business.find({ loc:  { $geoWithin:  { $centerSphere: [ [ -80.839186,35.226504], 5/3963.2 ] } } }) .count() = 2780
+4.	Find all the reviews for restaurant X 
+db.yelp.review.find({ "business_id" : "hB3kH0NgM5LkEWMnMMDnHw"}).pretty().count() = 20
+5.	Find all the reviews for restaurant X that are 5 stars.
+db.yelp.review.find({ "business_id" : "P1fJb2WQ1mXoiudj8UE44w" , "stars" : 5}).pretty().count() = 25
+6.	Find all the users that have been 'yelping' for over 5 years.
+db.yelp.user.find({ "yelping_since" : {$lte:"2012-01"}}, {"name":true}).pretty().count() = 249854 
+
+7.	Find the business that has the tip with the most likes.
+
+db.yelp.tip.find().sort({"likes":-1}).limit(1).pretty()
+
+o/p:
+
+{
+        "_id" : ObjectId("581a2a852fd5907425f6ace1"),
+        "user_id" : "WmAyExqSWoiYZ5XEqpk_Uw",
+        "text" : "License photographer assured me her photos always came out great. That is false! My head looks like something Super Mario stomps on. Greeeeeaaaaaat.",
+        "business_id" : "iTLwGhF-NyHGrgoYzGK7xw",
+        "likes" : 11,
+        "date" : "2015-09-17",
+        "type" : "tip"
+}
+
+8.	Find the average review_count for users.
+db.yelp.user.aggregate(    [   {        $group:          {            _id: "$n                                                                                                             ame",            avgreview_count: { $avg: "$review_count" }          }      }                                                                                                                 ])
+O/P:
+{ "_id" : "MAureen", "avgreview_count" : 1 }
+{ "_id" : "Guangyi", "avgreview_count" : 1 }
+{ "_id" : "Lanitra", "avgreview_count" : 24 }
+{ "_id" : "Stabby", "avgreview_count" : 18 }
+{ "_id" : "Chinagirl", "avgreview_count" : 14 }
+{ "_id" : "Noo", "avgreview_count" : 8 }
+{ "_id" : "Alex Quintin", "avgreview_count" : 1 }
+{ "_id" : "Cheechaw", "avgreview_count" : 178 }
+{ "_id" : "Prazen", "avgreview_count" : 2 }
+{ "_id" : "Emsie", "avgreview_count" : 27 }
+{ "_id" : "Coca", "avgreview_count" : 23 }
+{ "_id" : "Kyle-Louis", "avgreview_count" : 6 }
+{ "_id" : "Ying-Chih", "avgreview_count" : 4 }
+{ "_id" : "La Shonda", "avgreview_count" : 4 }
+{ "_id" : "Giada", "avgreview_count" : 9 }
+{ "_id" : "Kataelyna", "avgreview_count" : 3 }
+{ "_id" : "Anna Lou", "avgreview_count" : 25 }
+{ "_id" : "Giancarla", "avgreview_count" : 326 }
+{ "_id" : "Lamiaa", "avgreview_count" : 35 }
+{ "_id" : "Harish Kumar", "avgreview_count" : 1 }
+
+
+9.	Find all the users that are considered elite.
+db.yelp.user.find({"elite":{"$ne":[]}},{"_id":0,"user_id":1,"name":1,"elite":1})
+
+o/p:
+
+> db.yelp.user.find({"elite":{"$ne":[]}},{"_id":0,"user_id":1,"name":1,"elite":1})
+{ "user_id" : "SIBCL7HBkrP4llolm4SC2A", "name" : "Katherine", "elite" : [ 2005 ] }
+{ "user_id" : "ysYmC-ufbdmVEX9yAv-VEQ", "name" : "George", "elite" : [ 2005, 2006, 2007 ] }
+{ "user_id" : "WPOKvkacSKHx_bIG1alFiA", "name" : "Mary", "elite" : [ 2005 ] }
+{ "user_id" : "18kPq7GPye-YQ3LyKyAZPw", "name" : "Russel", "elite" : [ 2005, 2006 ] }
+{ "user_id" : "rpOyqD_893cqmDAtJLbdog", "name" : "Jeremy", "elite" : [ 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 ] }
+{ "user_id" : "4U9kSBLuBDU391x6bxU-YA", "name" : "Michael", "elite" : [ 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 ] }
+{ "user_id" : "ZWOj6LmzwGvMDh-A85EOtA", "name" : "Helen", "elite" : [ 2005, 2006, 2007, 2008, 2010, 2011, 2012 ] }
+{ "user_id" : "oNB_7-GlUaYL3SWPtXYHrA", "name" : "Albert", "elite" : [ 2016 ] }
+{ "user_id" : "8J4IIYcqBlFch8T90N923A", "name" : "Joan", "elite" : [ 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 ] }
+{ "user_id" : "wy6l_zUo7SN0qrvNRWgySw", "name" : "Ryo", "elite" : [ 2007 ] }
+{ "user_id" : "T4kuUr_iJiywOPdyM7gTHQ", "name" : "jenna", "elite" : [ 2005, 2006, 2007 ] }
+{ "user_id" : "YkafUZz74f5C8ozi5NX73g", "name" : "Felicia", "elite" : [ 2008, 2009 ] }
+{ "user_id" : "totSIgraA3tIEh2Kbt82_w", "name" : "Phan", "elite" : [ 2012, 2013, 2014, 2015, 2016 ] }
+{ "user_id" : "1vkgXuTPCStERQ54L6fVLw", "name" : "Corrie", "elite" : [ 2016 ] }
+{ "user_id" : "anTtulQ9G2b3SipCEwGVHg", "name" : "Kevin", "elite" : [ 2008, 2009, 2010, 2011 ] }
+{ "user_id" : "QEYTm3qf6Kmp0VmamXQW_A", "name" : "Elyse", "elite" : [ 2011, 2012, 2013, 2014, 2015 ] }
+{ "user_id" : "makftOiFZ3CgbHWeVgiLaA", "name" : "Brennan", "elite" : [ 2015, 2016 ] }
+{ "user_id" : "7OBtilKF-b7OEQhFzKXruA", "name" : "Devon", "elite" : [ 2015, 2016 ] }
+{ "user_id" : "0eNNaJM9rPdUGaG5eaOJqQ", "name" : "Janey", "elite" : [ 2013, 2014, 2015, 2016 ] }
+{ "user_id" : "OpvNN4ELpFz8b_aZq8UlqQ", "name" : "Tung", "elite" : [ 2015, 2016 ] }
+
+10.	Find the longest elite user.
+
+	db.yelp.user.aggregate({$project:{lengthofelite : {$size : "$elite"}}},
+
+    {$group: {
+        _id: null, 
+        max: {$max: "$lengthofelite" }
+    }}
+)
+
+o/p:
+
+{ "_id" : null, "max" : 12 }
+   or
+   	db.yelp.user.find({"elite":{"$ne":null}},{"_id":0,"name":1,"elite":1}).sort({"elite":-     1}).limit(1).pretty()
+
+11.	Of elite users, whats the average number of years someone is elite.
+
+db.yelp.user.aggregate([{"$group": {"_id":"$name","avg": { "$avg": { "$size" : "$elite" }}}}] )
+O/P:
+{ "_id" : "MAureen", "avg" : 0 }
+{ "_id" : "Guangyi", "avg" : 0 }
+{ "_id" : "Lanitra", "avg" : 0 }
+{ "_id" : "Stabby", "avg" : 0 }
+{ "_id" : "Chinagirl", "avg" : 0 }
+{ "_id" : "Noo", "avg" : 0 }
+{ "_id" : "Alex Quintin", "avg" : 0 }
+{ "_id" : "Cheechaw", "avg" : 0 }
+{ "_id" : "Prazen", "avg" : 0 }
+{ "_id" : "Emsie", "avg" : 0 }
+{ "_id" : "Coca", "avg" : 0 }
+{ "_id" : "Kyle-Louis", "avg" : 0 }
+{ "_id" : "Ying-Chih", "avg" : 0 }
+{ "_id" : "La Shonda", "avg" : 0 }
+{ "_id" : "Giada", "avg" : 0 }
+{ "_id" : "Kataelyna", "avg" : 0 }
+{ "_id" : "Anna Lou", "avg" : 0 }
+{ "_id" : "Giancarla", "avg" : 2 }
+{ "_id" : "Lamiaa", "avg" : 0 }
+{ "_id" : "Harish Kumar", "avg" : 0 }
+
+
+Difficult
+
+
+
+1.Find the probable city a user lives in based on a set of reviews
+db.yelp.business.aggregate({$lookup:{ from:"yelp.user", localField:" reviewcount", foreignField:" reviewcount " as:"city"}})
+
+2.Find the busiest checkin times for all businesses in the 75205 & 75225 zip codes.
+db. yelp.business.find( { full_address: { $in: [ /75205 /, /75225/ ] } } ).pretty()
+db.yelp.business.find(  {"hours":{"$ne":{}}} , {"full_address": /75205/,"full_address": /75225/}).pretty()
+
+3.Find the business with the most checkins from Friday at 5pm until Sunday morning at 2am.
+db.yelp.checkin.aggregate([{$group : {_id :"business_id", maxcheck : {$max : "$checkin_info"}}}])
+{ "_id" : "business_id", "maxcheck" : { "9-6" : 47, "7-6" : 3, "19-2" : 1, "16-0" : 1, "11-6" : 22, "13-6" : 2, "12-6" : 8, "8-6" : 36, "15-6" : 1, "10-6" : 33 } }
+
+5. Find all restaurants average rating.
+
+var x = db.yelp.business.aggregate ([{ $group : {_id : "$name", average : {$avg : "$stars"}}}])
+x.forEach(function(d){print (d.average);})
