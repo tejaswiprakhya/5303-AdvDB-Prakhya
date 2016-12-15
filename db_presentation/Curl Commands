@@ -1,0 +1,105 @@
+Curl Commands that were given demo to class:
+
+
+db._createDatabase('Demo', {}, []); 
+
+-- arangosh --server.database music_library --server.username sammy --server.password password 
+
+
+
+
+
+db.test.save(
+{ title: "Immigrant Song", album: "Led Zeppelin III", artist: "Led Zeppelin", year: 1970, length: 143, _key: "immigrant_song" }
+)
+
+db.test.save(
+{album: "Led Zeppelin III", title: "Friends", artist: "Led Zeppelin", year: 1970, length: 235, _key: "friends"}
+);
+
+db.test.save(
+{album: "Led Zeppelin III", title: "Celebration Day", artist: "Led Zeppelin", year: 1970, length: 209, _key: "celebration_day"}
+);
+
+db.test.save(
+{album: "Led Zeppelin III", title: "Since I've Been Loving You", artist: "Led Zeppelin", year: 1970, length: 445, _key: "since_i_ve_been_loving_you"}
+);
+
+db.test.save(
+{album: "Led Zeppelin III", title: "Out On the Tiles", artist: "Led Zeppelin", year: 1970, length: 244, _key: "out_on_the_tiles"}
+);
+
+db.test.save(
+{album: "Led Zeppelin III", title: "Gallows Pole", artist: "Led Zeppelin", year: 1970, length: 298, _key: "gallows_pole"}
+);
+
+db.test.save(
+{album: "Led Zeppelin III", title: "Tangerine", artist: "Led Zeppelin", year: 1970, length: 192, _key: "tangerine"}
+);
+
+db.test.save(
+{album: "Led Zeppelin III", title: "That's the Way", artist: "Led Zeppelin", year: 1970, length: 338, _key: "that_s_the_way"}
+);
+
+db.test.save(
+{album: "Led Zeppelin III", title: "Bron-Y-Aur Stomp", artist: "Led Zeppelin", year: 1970, length: 260, _key: "bron_y_aur_stomp"}
+);
+
+
+
+
+
+db.test.save(
+{album: "Led Zeppelin III", title: "Hats Off to (Roy) Harper", artist: "Led Zeppelin", year: 1970, length: 221, _key: "hats_off_to_roy_harper"}
+);
+
+db.test.document('immigrant_song');
+
+db.test.update("test/immigrant_song",{ genre: "Hard Rock" });
+
+db.test.remove("test/immigrant_song");
+
+
+var graph_module = require("org/arangodb/general-graph");
+var graph = graph_module._create("myGraph");
+arangosh> graph;
+[ Graph myGraph EdgeDefinitions: [ ] VertexCollections: [ ] ]
+
+
+graph._addVertexCollection("shop");
+graph._addVertexCollection("customer");
+graph;
+
+
+
+
+db.shop.save( { name:"LuckySeven",_key:"LuckySeven"});
+db.shop.save( { name:"DollarSaver",_key:"DollarSaver"});
+db.shop.save( { name:"Walmart",_key:"Walmart"});
+db.shop.save( { name:"Stripe",_key:"Stripe"});
+
+
+db.customer.save({CustomerId:18,Customername:"Sammy",_key:"Sammy"});
+db.customer.save({CustomerId:19,Customername:"David",_key:"David"});
+db.customer.save({CustomerId:20,Customername:"Jimmy",_key:"Jimmy"});
+db.customer.save({CustomerId:25,Customername:"Joe",_key:"Joe"});
+
+
+
+
+
+var rel = graph_module._relation("isCustomer",["customer"],["shop"]);
+graph._extendEdgeDefinitions(rel);
+graph;
+
+
+
+graph._addVertexCollection("pet");
+
+
+
+
+
+
+
+
